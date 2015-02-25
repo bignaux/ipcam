@@ -1,14 +1,14 @@
 import requests
 import logging
-from flufl.enum import Enum
+from enum import Enum
 
 
 # Logger settings
-#logger = logging.getLogger('ipcam')
-#formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-#hdlr.setFormatter(formatter)
-#logger.addHandler(hdlr)
-#logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger('ipcam')
+# formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+# hdlr.setFormatter(formatter)
+# logger.addHandler(hdlr)
+# logger.setLevel(logging.DEBUG)
 
 
 # this list is meant to be accessed by the status code returned
@@ -65,7 +65,7 @@ class api(Enum):
     """Device cgi APIs"""
     snapshot = 'snapshot.cgi'
     videostream = 'videostream.cgi'
-    videostream = 'videostream.asf'
+    videostream_asf = 'videostream.asf'
     get_status = 'get_status.cgi'
     decoder_control = 'decoder_control.cgi'
     camera_control = 'camera_control.cgi'
@@ -96,10 +96,9 @@ class api(Enum):
 class decoderctl(Enum):
     """
     Decoder control commands.
-    Values [8, 24] and [30, 93] are reserved.
     """
     up = 0
-    stop_up = 1
+    stop_up = 1  # stop ?
     down = 2
     stop_down = 3
     left = 4
@@ -111,26 +110,45 @@ class decoderctl(Enum):
     stop_vertical_patrol = 27
     horizon_patrol = 28
     stop_horizon_patrol = 29
+    up_left = 90
+    up_right = 91
+    down_left = 92
+    down_right = 93
     io_output_high = 94
     io_output_low = 95
-
 
 def _parse_status_response(response):
     """
     Parses the reponse from get_status cgi call.
     :param response: (Required) String response from get_status cgi call.
     """
-    print response
-    return dict(now='', alarm_status=alarm_status[0],
-                ddns_status=ddns_status[0], upnp_status=upnp_status[0])
+    import re
+    d = dict()
+    p = re.compile('var (\S+)=(\S+);')
+    for i in response.text.splitlines():
+        k, v = p.match(i).groups()
+        d[k] = v
+       
+    for k, v in d.items():
+        print '{} = {}'.format(k, v)
+    
+    return d
+#     print response.url
+#     print response.content
+#     return dict(now='', alarm_status=alarm_status[0],
+#                 ddns_status=ddns_status[0], upnp_status=upnp_status[0])
 
 
 class IPCam(object):
-    def __init__(self, ip, port, user='admin', password=''):
+    def __init__(self, ip, port='80', user='admin', password=''):
         self.ip = ip
         self.port = port
         self.user = user
         self.password = password
+        
+    def build_url(self, cmd, **request_params):
+        url = 'http://{ip}:{port}/{cmd}'.format(ip=self.ip, port=self.port, cmd=cmd.value)
+        return url
 
     def send_command(self, cmd, **request_params):
         """
@@ -141,13 +159,15 @@ class IPCam(object):
         url = 'http://{ip}:{port}/{cmd}'.format(ip=self.ip, port=self.port, cmd=cmd.value)
         request_params['user'] = self.user
         request_params['pwd'] = self.password
+
         r = requests.get(url, params=request_params)
         print r.url
-        print r.content
-        if r.content == 'error: illegal params.':
-            raise Exception('Error: illegal params.')
-        elif r.content == 'ok.':
-            return True
+        if int(r.headers['content-length']) < 100:
+            print r.content
+            if r.content == 'error: illegal params.':
+                raise Exception('Error: illegal params.')
+            elif r.content == 'ok.':
+                return True
         return r.content
 
     def snapshot(self, name=None):
@@ -167,7 +187,8 @@ class IPCam(object):
         Requires visitor permission.
         :param resolution: (Optional) Output's resolution. Can be either 320*240 or 640*480.
         """
-        self.send_command(api.videostream, resolution=resolution)
+        params = dict(resolution=resolution, stream=True)
+        return self.send_command(api.videostream)
 
     def videostream_asf(self, resolution='640*480'):
         """
@@ -178,7 +199,12 @@ class IPCam(object):
         self.send_command(api.videostream_asf, resolution=resolution)
 
     def move_a_little(self, direction):
-        pass
+        """
+        
+        add onestep=1
+        """
+        params = dict(command=direction)
+        self.send_command(api.decoder_control, **params)
 
     def get_status(self):
         """
