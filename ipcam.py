@@ -63,34 +63,53 @@ class upnp(Enum):
 
 class api(Enum):
     """Device cgi APIs"""
-    snapshot = 'snapshot.cgi'
-    videostream = 'videostream.cgi'
-    videostream_asf = 'videostream.asf'
-    get_status = 'get_status.cgi'
-    decoder_control = 'decoder_control.cgi'
+#     Camera_control.cgi
+#     Check_user.cgi
+#     Videostream.cgi
+#     backup_params.cgi
     camera_control = 'camera_control.cgi'
+    comm_write = 'comm_write.cgi'
+    decoder_control = 'decoder_control.cgi'
+    get_camera_params = 'get_camera_params.cgi'
+#     get_factory_ddns.cgi
+#     get_forbidden.cgi
+#     get_log.cgi
+    get_misc = 'get_misc.cgi'
+    get_params = 'get_params.cgi'
+    get_status = 'get_status.cgi'
+#     get_wifi_scan_result.cgi
     reboot = 'reboot.cgi'
     restore_factory = 'restore_factory.cgi'
-    get_params = 'get_params.cgi'
-    upgrade_firmware = 'upgrade_firmware.cgi'
-    upgrade_htmls = 'upgrade_htmls.cgi'
+#     restore_factory_ddns.cgi
+#     restore_params.cgi
+    set_alarm = 'set_alarm.cgi'
     set_alias = 'set_alias.cgi'
     set_datetime = 'set_datetime.cgi'
-    set_users = 'set_users.cgi'
+    set_ddns = 'set_ddns.cgi'
+    set_decoder = 'set_decoder.cgi'
     set_devices = 'set_devices.cgi'
+#     set_extra_io.cgi
+#     set_factory_ddns.cgi
+#     set_factory_params.cgi
+    set_forbidden = 'set_forbidden.cgi'
+    set_ftp = 'set_ftp.cgi'
+#     set_mac.cgi
+    set_mail = 'set_mail.cgi'
+    set_misc = 'set_misc.cgi'
+#     set_msn.cgi
     set_network = 'set_network.cgi'
-    set_wifi = 'set_wifi.cgi'
     set_pppoe = 'set_pppoe.cgi'
     set_upnp = 'set_upnp.cgi'
-    set_ddns = 'set_ddns.cgi'
-    set_ftp = 'set_ftp.cgi'
-    set_mail = 'set_mail.cgi'
-    set_alarm = 'set_alarm.cgi'
-    comm_write = 'comm_write.cgi'
-    set_forbidden = 'set_forbidden.cgi'
-    set_misc = 'set_misc.cgi'
-    get_misc = 'get_misc.cgi'
-    set_decoder = 'set_decoder.cgi'
+    set_users = 'set_users.cgi'
+    set_wifi = 'set_wifi.cgi'
+    snapshot = 'snapshot.cgi'
+#     test_ftp.cgi
+#     test_mail.cgi
+    upgrade_firmware = 'upgrade_firmware.cgi'
+    upgrade_htmls = 'upgrade_htmls.cgi'
+    videostream = 'videostream.cgi'
+    videostream_asf = 'videostream.asf'
+#     wifi_scan.cgi
 
 
 class decoderctl(Enum):
@@ -105,6 +124,24 @@ class decoderctl(Enum):
     stop_left = 5
     right = 6
     stop_right = 7
+    small_aperture = 8 
+    stop_small_aperture = 9 
+    large_aperture = 10
+    stop_large_aperture = 11
+    focus_close = 12
+    stop_focus_close = 13
+    focus_far = 14
+    stop_focus_far = 15
+    zoom_close = 16
+    stop_zoom_close = 17
+    zoom_far = 18
+    stop_zoom_far = 19
+    auto_patrol = 20
+    stop_auto_patro = 21
+    close_switch1 = 22
+    disconnect_switch1 = 23
+    close_switch2 = 24
+    disconnect_switch2 = 25
     center = 25
     vertical_patrol = 26
     stop_vertical_patrol = 27
